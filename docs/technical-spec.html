@@ -1,0 +1,90 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Doppel — technical specification</title>
+<style>
+@page{size:A4;margin:11mm 12mm}
+*{box-sizing:border-box}body{font:9.2pt/1.32 -apple-system,"Helvetica Neue",Arial,sans-serif;color:#16161a;margin:0}
+h1{font-size:17pt;margin:0;letter-spacing:-.2px}h1 span{color:#b3122d}
+.sub{color:#555;margin:2px 0 6px;font-size:9pt}
+.meta{display:flex;justify-content:space-between;border-top:1.5px solid #16161a;border-bottom:.5px solid #bbb;padding:3px 0;margin-bottom:7px;font-size:8.4pt}
+.cols{column-count:2;column-gap:7mm}
+h2{font-size:9.6pt;margin:7px 0 2px;color:#b3122d;text-transform:uppercase;letter-spacing:.5px;break-after:avoid}
+h2:first-child{margin-top:0}
+p{margin:0 0 3px}ul{margin:0 0 3px;padding-left:11px}li{margin:0 0 1.5px}
+code{font:8.2pt Menlo,monospace;background:#f1f0ec;padding:0 2px;border-radius:2px}
+table{border-collapse:collapse;width:100%;font-size:8.4pt;margin:2px 0 3px}td,th{border-bottom:.5px solid #ccc;padding:1.5px 3px;text-align:left;vertical-align:top}th{font-weight:600;background:#f6f5f1}
+.sec{break-inside:avoid}
+</style></head><body>
+<h1><span>Doppel</span> — a Swiss financial digital twin</h1>
+<div class="sub">Technical specification · UBS “AI Financial Twin” challenge · LauzHack 2026</div>
+<div class="meta"><span><b>Team TKT</b> — Barlas Şen, Oktay Yüce, Meriç Şen · pitch slot 6, 13:20</span><span><b>github.com/D0ktay/Doppel-TKT</b></span></div>
+<div class="cols">
+
+<div class="sec"><h2>What it is</h2>
+<p>From a person's profile and bank statement Doppel builds a twin of their finances and makes the future explorable: where the money goes today, where the current path leads, and what a decision changes. It does not predict; every result is conditional on stated assumptions.</p></div>
+
+<div class="sec"><h2>Architecture</h2>
+<ul>
+<li><b>Web app:</b> Next.js 15, React 19, TypeScript. The finance engine is deterministic TypeScript and runs in the browser.</li>
+<li><b>One server route</b> (<code>/api/twin</code>) is the only code that calls a language model; strict schemas, byte and token caps, rate limit and daily budget.</li>
+<li><b>No database:</b> accounts live in the browser's local storage. All data is fictional (UBS starter kit: 1'200 synthetic profiles, plus three built-in accounts).</li>
+<li><b>Same app as</b> a desktop app (Electron, server inside the app) and an Android shell (Expo). Optional hand control by camera (Python, MediaPipe) sends ordinary mouse and keyboard input.</li>
+</ul></div>
+
+<div class="sec"><h2>Inputs, assumptions, outputs</h2>
+<table>
+<tr><th>Inputs</th><td>Profile (age, canton, income, balances, debt, goals); bank statement (CSV, camt.053, MT940, broker / 3a); scanned documents; decisions typed in EN / DE / FR / TR.</td></tr>
+<tr><th>Assumptions</th><td>One dated, sourced table: equities 6.5% ± 16%, bonds 2% ± 5%, inflation 1.2%, mortgage stress rate 5%, AHV / BVG / pillar 3a figures. Five economic scenarios change them: baseline, high inflation, recession, low rates, climate transition.</td></tr>
+<tr><th>Outputs</th><td>Goal odds, net-worth range (P10–P50–P90) over time, monthly budget before and after a decision, lowest cash point, mortgage affordability, retirement income.</td></tr>
+</table>
+<p>Every parameter carries a provenance label: <code>ubs_synthetic</code>, <code>derived</code>, <code>user</code> or <code>doppel_default</code>.</p></div>
+
+<div class="sec"><h2>Financial model</h2>
+<ul>
+<li><b>Seeded Monte Carlo:</b> 1'000 monthly paths over asset classes (no single securities); the same seed gives the same result.</li>
+<li><b>Swiss rules in code:</b> affordability (5% imputed rate, 1% upkeep, one third of gross income; 20% equity, 10% of it hard), amortisation, AHV, BVG, pillar 3a, cantonal tax and health premiums.</li>
+<li><b>Life decisions with sourced costs:</b> child (phases, daycare, allowances, tax effect), car (cash, loan, lease, or GA instead), home, partner, move, education, workload, self-employment, job loss, windfall. A figure with no source is asked from the user, never assumed.</li>
+<li><b>Behaviour twin:</b> habits measured from transactions and trades (payday spending, subscriptions, selling in a drawdown) enter the simulation, so “you as you are” and “disciplined you” can be compared on the same markets.</li>
+<li><b>Goal solver:</b> finds the smallest change that reaches the goal.</li>
+</ul></div>
+
+<div class="sec"><h2>Scenario and counterfactual exploration</h2>
+<ul>
+<li>Apply a decision and see its own cost lines, the budget before → after, net worth in 1, 5 and 10 years, and the odds before → after; the chart draws both lines.</li>
+<li>Pin a Plan A and compare any other plan against it. Alexia's three starter-kit paths are built in.</li>
+<li><b>/play:</b> the same twin as a life game; a Monte Carlo tree search reviews each decision on the same simulated futures. A life choice is never graded as “best”.</li>
+</ul></div>
+
+<div class="sec"><h2>Use of AI</h2>
+<ul>
+<li><b>The model never does arithmetic.</b> It reads documents, parses free-form what-ifs the local parsers miss, and words answers.</li>
+<li><b>Grounded answers:</b> an answer containing a number the engine did not supply, or on the wrong time basis, is refused server-side.</li>
+<li><b>Frugal cascade:</b> QR decode → cache → local OCR and rules → small text model → small vision model; every call is in a token ledger the user can inspect.</li>
+<li>Open-weight models (Qwen3 30B) through any OpenAI-compatible endpoint; the app works fully without a model.</li>
+</ul></div>
+
+<div class="sec"><h2>Validation</h2>
+<table>
+<tr><th>Engine</th><td>Reproduces the starter kit's cash ledger for Alexia's paths; 23 checks on the UBS data layer; one regression check per fixed engine or parser bug; pinned fingerprint of the built-in accounts.</td></tr>
+<tr><th>Game</th><td>49 checks, incl. bit-for-bit parity between the game simulator and the dashboard engine.</td></tr>
+<tr><th>Gateway</th><td>39 checks on guards, caps and refused answers, against a stubbed model.</td></tr>
+<tr><th>UI</th><td>Headless browser run of the real pipeline at 320 px; four dictionaries checked for parity.</td></tr>
+<tr><th>Hand control</th><td>845 tests on recordings and synthetic input.</td></tr>
+</table>
+<p>All reproducible from the repository with one command each, no key needed.</p></div>
+
+<div class="sec"><h2>When a constraint is violated</h2>
+<ul>
+<li>Cash below zero is borrowed at 6% and counted as a cash crunch; its probability is shown.</li>
+<li>A home that fails the bank test is not bought in that future; the card shows the gap and the highest price that passes.</li>
+<li>A decision with missing inputs cannot be applied.</li>
+</ul></div>
+
+<div class="sec"><h2>Limits</h2>
+<ul>
+<li>Synthetic data only; rates are stated assumptions, not forecasts; tax is an approximation.</li>
+<li>Bank layouts follow typical exports and were not verified against real ones.</li>
+<li>Not modelled: reference-rate rent rule, SARON path, old-age care.</li>
+<li>With a live model about one answer in four is refused by the grounding check.</li>
+<li>The mobile shell was not run on a phone; the Windows build was not run.</li>
+</ul></div>
+
+</div></body></html>
