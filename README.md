@@ -67,8 +67,28 @@ Esc or Ctrl+C; the script then stops the Doppel server.
 
 - **macOS:** TKT starts in auto mode (desk camera = version A, camera facing you =
   version C). Give the terminal access to Camera, Accessibility and Input
-  Monitoring. `TKT_MODE=a ./demo.sh` starts version A only.
+  Monitoring, and allow Automation (System Events) when asked; dictation needs it.
+  `TKT_MODE=a ./demo.sh` starts version A only.
 - **Windows:** TKT starts in version A (desk camera) for now.
+
+### Hand control on macOS: what to know before the demo
+
+- **In C the hand mouse starts off**, so a hand passing in front of the camera does
+  not move the pointer. Hold a **peace sign** (index and middle up, ring and little
+  finger curled) for half a second to turn it on, and again to turn it off. Do this
+  first, or the pointer will look dead.
+- **Teach the peace sign once on the demo machine** (about 15 seconds): with TKT not
+  running, `cd tkt && uv run python -m tkt.app.sign_calib`, make the sign, press Space,
+  hold it, then Enter. Without it, fixed thresholds are used and may not match your hand.
+- **Control window:** Ctrl+N (or "TKT" in the menu bar) shows it. It has the hand-mouse
+  switch, distance zoom, the desk-area option for version A, and one row per
+  calibration (desk area, hand, pinch, peace sign, normal distance) with a button to
+  redo only that one. Calibrations are kept in `~/.tkt/`, nothing is redone on the next start.
+- **Distance zoom** (off by default): Ctrl+M turns it on; lean back and the frontmost app
+  zooms in by up to four steps, back at your normal distance it returns to normal. Ctrl+Shift+M
+  takes your current distance as normal. Apps without a Zoom In / Zoom Out menu item
+  (for example VS Code, Finder) are left alone.
+- Esc quits from anywhere.
 
 Camera setup and calibration: [tkt/README.md](https://github.com/D0ktay/TKT#readme).
 
