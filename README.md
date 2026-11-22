@@ -82,3 +82,7 @@ git commit -am "Update Doppel and TKT"
 ```
 
 Changes to either project go to its own repository first.
+
+## License
+
+The files in this repository are MIT licensed, see [LICENSE](LICENSE). `doppel/` and `tkt/` are separate repositories with their own licenses.
