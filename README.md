@@ -1,17 +1,42 @@
 # Doppel + TKT
 
-A Swiss personal-finance twin you control with your hand at a desk.
+A Swiss personal-finance digital twin, built from a person's own data and bank
+statement, that you can also control with your hand at a desk.
 
 This repository holds no code of its own. It pins two projects as git submodules,
 each still developed in its own repository:
 
 | Folder | Project | What it does |
 |---|---|---|
-| [`doppel/`](https://github.com/Barlassen/Doppel) | Doppel | Web app: scan receipts and bills, simulate your finances, play the chessboard life game at `/play`. |
+| [`doppel/`](https://github.com/D0ktay/Doppel/tree/oktay/twin-upgrade) | Doppel | The twin: web app, plus a desktop app (`desktop/`) and an Expo shell for Android (`mobile/`). |
 | [`tkt/`](https://github.com/D0ktay/TKT) | TKT | Hand control: one camera turns your hand into a pointer (cursor, click, drag, scroll, dictation). |
 
+`doppel/` is pinned to the branch `oktay/twin-upgrade` of the fork `D0ktay/Doppel`.
+The same commits are open as [pull request #6](https://github.com/Barlassen/Doppel/pull/6)
+against the original repository, `Barlassen/Doppel`, and are not merged there yet.
+
+## What the twin does
+
+- **Reads a bank statement** (CSV, camt.053, MT940, broker / pillar 3a) and shows what it
+  learned: income, fixed costs, spending by category, saving rate, and inferred facts
+  (tenant, car, child, debt) that the user confirms or rejects. Receipts, QR-bills,
+  payslips and listings can be scanned as well.
+- **Shows who the twin is and where the money goes:** a twin card with a financial
+  health score in five labelled parts, "Where my money goes" per month or per year,
+  recurring payments, this month against the usual, and next month's forecast.
+- **Shows what a decision changes:** a child, a car (bought, financed, leased or a GA
+  travelcard instead), a home, a partner, a move, further education, part-time work,
+  self-employment, a job loss, an inheritance. Each comes with its own cost lines from
+  sourced Swiss figures, the monthly budget before and after, net worth in 1, 5 and 10
+  years, the lowest cash point, and the goal odds before and after.
+- **Follows the economy:** five scenarios (baseline, high inflation, recession, low
+  rates, climate transition) on one dated, sourced table of assumptions.
+- **Answers questions** through a small language model that may only quote figures the
+  engine computed; an answer with any other number is refused. No model does arithmetic.
+- **Is a game too:** `/play` turns the same twin into a chess-review life game.
+
 TKT sends ordinary mouse and keyboard input, so Doppel needs no special code to
-be driven by hand. See [doppel/docs/TKT.md](https://github.com/Barlassen/Doppel/blob/main/docs/TKT.md)
+be driven by hand. See [doppel/docs/TKT.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/docs/TKT.md)
 for the gestures and a 30-second demo.
 
 ## Get it
@@ -46,8 +71,25 @@ Esc or Ctrl+C; the script then stops the Doppel server.
 - **Windows:** TKT starts in version A (desk camera) for now.
 
 Camera setup and calibration: [tkt/README.md](https://github.com/D0ktay/TKT#readme).
-Doppel without hand control, API keys and the finance engine:
-[doppel/README.md](https://github.com/Barlassen/Doppel#readme).
+
+## Run Doppel alone
+
+```bash
+cd doppel
+npm ci
+cp .env.example .env.local   # optional: a key for the assistant (OpenRouter or any OpenAI-compatible endpoint)
+npm run build && npm start   # http://localhost:3000
+```
+
+Without a key everything except the assistant's wording works; all numbers are
+computed on the device.
+
+- **Desktop app** (starts with a double-click, runs the server inside the app):
+  `npm run desktop:install && npm run desktop:build`, see [docs/DESKTOP.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/docs/DESKTOP.md).
+- **Android, in Expo Go:** `cd mobile && npm install && npx expo start`, see
+  [docs/MOBILE.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/docs/MOBILE.md). It is a shell around the running web app.
+
+More: [doppel/README.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/README.md).
 
 ## For judges
 
@@ -56,23 +98,33 @@ of multimodal AI" track. All people, companies and documents are fictional.
 
 | Question | Where to look |
 |---|---|
-| What is scored and where is the evidence? | [doppel/docs/JUDGING.md](https://github.com/Barlassen/Doppel/blob/main/docs/JUDGING.md): rubric table, the five judge questions, assumptions and limits |
-| Three-minute demo | Same file, "Three-minute demo"; hand gestures in [doppel/docs/TKT.md](https://github.com/Barlassen/Doppel/blob/main/docs/TKT.md) |
-| Token and cost evidence (AXA) | [doppel/docs/BENCHMARK.md](https://github.com/Barlassen/Doppel/blob/main/docs/BENCHMARK.md), and the Inspector in the app |
-| Design decisions | [doppel/docs/DECISIONS.md](https://github.com/Barlassen/Doppel/blob/main/docs/DECISIONS.md) |
+| What is scored and where is the evidence? | [doppel/docs/JUDGING.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/docs/JUDGING.md): rubric table, the five judge questions, assumptions and limits |
+| Three-minute demo | Same file, "Three-minute demo"; hand gestures in [doppel/docs/TKT.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/docs/TKT.md) |
+| Token and cost evidence (AXA) | [doppel/docs/BENCHMARK.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/docs/BENCHMARK.md), and the Inspector in the app |
+| Design decisions | [doppel/docs/DECISIONS.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/docs/DECISIONS.md) |
 
 Reproduce the numbers without a camera or an API key:
 
 ```bash
 cd doppel && npm ci
-npx tsx scripts/engine-check.ts   # finance engine on the built-in accounts
-npm run ubs:check                 # engine against the UBS starter kit's ledger
-npm run play:check                # the /play life game
+npm run engine:check        # finance engine on the built-in accounts
+npm run engine:regression   # one check per fixed engine or parser bug
+npm run ubs:check           # engine against the UBS starter kit's ledger
+npm run api:check           # model gateway: guards, caps, answers refused when not grounded
+npm run play:check          # the /play life game, incl. parity with the dashboard engine
 cd ../tkt && uv sync && uv run pytest   # hand control, on recordings and synthetic input
 ```
 
-Not verified: the two demo scripts were not run end to end with a camera, and
-`demo.ps1` was not run on Windows. Run the demo once on the demo machine first.
+Known and not verified:
+
+- `npm run play:board` has one failing check: 208 of 250 simulated games open in the
+  centre and the check asks for all of them. Its other checks pass (no illegal move,
+  no king walk in the opening, the clicked piece is the piece that moves).
+- The mobile shell was not run on a phone; the Windows desktop installer was built but
+  not run; the two demo scripts were not run end to end with a camera, and `demo.ps1`
+  was not run on Windows. Run the demo once on the demo machine first.
+- With a live model about one answer in four is refused by the grounding check; the
+  user then sees that it could not be answered from the engine's figures.
 
 ## Update the pinned versions
 
@@ -80,6 +132,10 @@ Not verified: the two demo scripts were not run end to end with a camera, and
 git submodule update --remote doppel tkt
 git commit -am "Update Doppel and TKT"
 ```
+
+When pull request #6 is merged, point `doppel` back at the original repository:
+`git submodule set-url doppel https://github.com/Barlassen/Doppel.git` and
+`git submodule set-branch --branch main doppel`.
 
 Changes to either project go to its own repository first.
 

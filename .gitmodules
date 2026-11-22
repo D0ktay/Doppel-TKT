@@ -1,7 +1,7 @@
 [submodule "doppel"]
 	path = doppel
-	url = https://github.com/Barlassen/Doppel.git
-	branch = main
+	url = https://github.com/D0ktay/Doppel.git
+	branch = oktay/twin-upgrade
 [submodule "tkt"]
 	path = tkt
 	url = https://github.com/D0ktay/TKT.git
