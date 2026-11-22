@@ -1,0 +1,8 @@
+[submodule "doppel"]
+	path = doppel
+	url = https://github.com/Barlassen/Doppel.git
+	branch = main
+[submodule "tkt"]
+	path = tkt
+	url = https://github.com/D0ktay/TKT.git
+	branch = main
