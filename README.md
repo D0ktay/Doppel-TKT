@@ -49,6 +49,31 @@ Camera setup and calibration: [tkt/README.md](https://github.com/D0ktay/TKT#read
 Doppel without hand control, API keys and the finance engine:
 [doppel/README.md](https://github.com/Barlassen/Doppel#readme).
 
+## For judges
+
+Built at LauzHack 2026 for the UBS "AI Financial Twin" track and the AXA "Frugal use
+of multimodal AI" track. All people, companies and documents are fictional.
+
+| Question | Where to look |
+|---|---|
+| What is scored and where is the evidence? | [doppel/docs/JUDGING.md](https://github.com/Barlassen/Doppel/blob/main/docs/JUDGING.md): rubric table, the five judge questions, assumptions and limits |
+| Three-minute demo | Same file, "Three-minute demo"; hand gestures in [doppel/docs/TKT.md](https://github.com/Barlassen/Doppel/blob/main/docs/TKT.md) |
+| Token and cost evidence (AXA) | [doppel/docs/BENCHMARK.md](https://github.com/Barlassen/Doppel/blob/main/docs/BENCHMARK.md), and the Inspector in the app |
+| Design decisions | [doppel/docs/DECISIONS.md](https://github.com/Barlassen/Doppel/blob/main/docs/DECISIONS.md) |
+
+Reproduce the numbers without a camera or an API key:
+
+```bash
+cd doppel && npm ci
+npx tsx scripts/engine-check.ts   # finance engine on the built-in accounts
+npm run ubs:check                 # engine against the UBS starter kit's ledger
+npm run play:check                # the /play life game
+cd ../tkt && uv sync && uv run pytest   # hand control, on recordings and synthetic input
+```
+
+Not verified: the two demo scripts were not run end to end with a camera, and
+`demo.ps1` was not run on Windows. Run the demo once on the demo machine first.
+
 ## Update the pinned versions
 
 ```bash
