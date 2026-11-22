@@ -6,6 +6,15 @@ param(
 )
 $ErrorActionPreference = "Stop"
 $root = $PSScriptRoot
+
+# What has to be installed first; see "Before you start" in README.md.
+$missing = @("git", "node", "npm", "uv") | Where-Object { -not (Get-Command $_ -ErrorAction SilentlyContinue) }
+if ($missing) { throw "Missing: $($missing -join ', '). Install them first (README.md, 'Before you start'), then run demo.ps1 again." }
+$nodeMajor = [int](node -p "process.versions.node.split('.')[0]")
+if ($nodeMajor -lt 20) { throw "Node.js $(node -v) is too old; Doppel needs Node.js 20 or newer." }
+if (Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue) {
+  throw "Port $Port is already in use. Stop what runs there or choose another: demo.ps1 -Port 3001"
+}
 Push-Location $root
 try {
   # Only the two top-level submodules; doppel/tkt is not needed because tkt/ is used.

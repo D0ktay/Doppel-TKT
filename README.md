@@ -35,6 +35,19 @@ TKT sends ordinary mouse and keyboard input, so Doppel needs no special code to
 be driven by hand. See [doppel/docs/TKT.md](https://github.com/Barlassen/Doppel/blob/main/docs/TKT.md)
 for the gestures and a 30-second demo.
 
+## Before you start
+
+Install these once; everything else is fetched by the scripts.
+
+| | macOS | Windows |
+|---|---|---|
+| Git | `xcode-select --install` | `winget install Git.Git` |
+| Node.js 20 or newer | `brew install node` | `winget install OpenJS.NodeJS.LTS` |
+| [uv](https://docs.astral.sh/uv/) (it fetches Python 3.11 itself) | `brew install uv` | `winget install astral-sh.uv` |
+
+Open a new terminal afterwards so the commands are found. Hand control needs a
+camera; Doppel alone does not.
+
 ## Get it
 
 ```bash
@@ -56,10 +69,22 @@ LogiInsight camera (or any webcam) for hand control.
 powershell -ExecutionPolicy Bypass -File demo.ps1   # Windows
 ```
 
-The script initialises the submodules, installs Doppel (`npm ci`) and TKT
-(`uv sync`, hand model download) on first run, builds and starts Doppel at
-`http://localhost:3000/play`, and starts TKT in the foreground. Quit TKT with
-Esc or Ctrl+C; the script then stops the Doppel server.
+The script checks that Git, Node.js and uv are installed, initialises the
+submodules, installs Doppel (`npm ci`) and TKT (`uv sync`, hand model download)
+on first run, builds and starts Doppel at `http://localhost:3000/play`, and
+starts TKT in the foreground. Quit TKT with Esc or Ctrl+C; the script then stops
+the Doppel server. The first run takes a few minutes.
+
+If something does not start:
+
+- **"Port 3000 is already in use":** `PORT=3001 ./demo.sh`, or `demo.ps1 -Port 3001`.
+- **The pointer does not move (macOS):** System Settings → Privacy & Security →
+  give the terminal Camera, Accessibility and Input Monitoring, then start again.
+- **The wrong camera opens:** `cd tkt && uv run python -m tkt.vision.camera --list`,
+  then set `name` or `index` under `[camera]` in `tkt/config/vision.toml`. With no
+  saved calibration TKT starts with default values; calibrate in
+  `uv run python -m tkt.vision.debug_view` if the pointer feels off.
+- **No camera at hand:** run Doppel alone (next section).
 
 - **macOS:** TKT starts in auto mode (desk camera = version A, camera facing you =
   version C). Give the terminal access to Camera, Accessibility and Input
