@@ -8,12 +8,8 @@ each still developed in its own repository:
 
 | Folder | Project | What it does |
 |---|---|---|
-| [`doppel/`](https://github.com/D0ktay/Doppel/tree/oktay/twin-upgrade) | Doppel | The twin: web app, plus a desktop app (`desktop/`) and an Expo shell for Android (`mobile/`). |
+| [`doppel/`](https://github.com/Barlassen/Doppel) | Doppel | The twin: web app, plus a desktop app (`desktop/`) and an Expo shell for Android (`mobile/`). |
 | [`tkt/`](https://github.com/D0ktay/TKT) | TKT | Hand control: one camera turns your hand into a pointer (cursor, click, drag, scroll, dictation). |
-
-`doppel/` is pinned to the branch `oktay/twin-upgrade` of the fork `D0ktay/Doppel`.
-The same commits are open as [pull request #6](https://github.com/Barlassen/Doppel/pull/6)
-against the original repository, `Barlassen/Doppel`, and are not merged there yet.
 
 ## What the twin does
 
@@ -36,7 +32,7 @@ against the original repository, `Barlassen/Doppel`, and are not merged there ye
 - **Is a game too:** `/play` turns the same twin into a chess-review life game.
 
 TKT sends ordinary mouse and keyboard input, so Doppel needs no special code to
-be driven by hand. See [doppel/docs/TKT.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/docs/TKT.md)
+be driven by hand. See [doppel/docs/TKT.md](https://github.com/Barlassen/Doppel/blob/main/docs/TKT.md)
 for the gestures and a 30-second demo.
 
 ## Get it
@@ -105,11 +101,11 @@ Without a key everything except the assistant's wording works; all numbers are
 computed on the device.
 
 - **Desktop app** (starts with a double-click, runs the server inside the app):
-  `npm run desktop:install && npm run desktop:build`, see [docs/DESKTOP.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/docs/DESKTOP.md).
+  `npm run desktop:install && npm run desktop:build`, see [docs/DESKTOP.md](https://github.com/Barlassen/Doppel/blob/main/docs/DESKTOP.md).
 - **Android, in Expo Go:** `cd mobile && npm install && npx expo start`, see
-  [docs/MOBILE.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/docs/MOBILE.md). It is a shell around the running web app.
+  [docs/MOBILE.md](https://github.com/Barlassen/Doppel/blob/main/docs/MOBILE.md). It is a shell around the running web app.
 
-More: [doppel/README.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/README.md).
+More: [doppel/README.md](https://github.com/Barlassen/Doppel/blob/main/README.md).
 
 ## For judges
 
@@ -118,10 +114,10 @@ of multimodal AI" track. All people, companies and documents are fictional.
 
 | Question | Where to look |
 |---|---|
-| What is scored and where is the evidence? | [doppel/docs/JUDGING.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/docs/JUDGING.md): rubric table, the five judge questions, assumptions and limits |
-| Three-minute demo | Same file, "Three-minute demo"; hand gestures in [doppel/docs/TKT.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/docs/TKT.md) |
-| Token and cost evidence (AXA) | [doppel/docs/BENCHMARK.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/docs/BENCHMARK.md), and the Inspector in the app |
-| Design decisions | [doppel/docs/DECISIONS.md](https://github.com/D0ktay/Doppel/blob/oktay/twin-upgrade/docs/DECISIONS.md) |
+| What is scored and where is the evidence? | [doppel/docs/JUDGING.md](https://github.com/Barlassen/Doppel/blob/main/docs/JUDGING.md): rubric table, the five judge questions, assumptions and limits |
+| Three-minute demo | Same file, "Three-minute demo"; hand gestures in [doppel/docs/TKT.md](https://github.com/Barlassen/Doppel/blob/main/docs/TKT.md) |
+| Token and cost evidence (AXA) | [doppel/docs/BENCHMARK.md](https://github.com/Barlassen/Doppel/blob/main/docs/BENCHMARK.md), and the Inspector in the app |
+| Design decisions | [doppel/docs/DECISIONS.md](https://github.com/Barlassen/Doppel/blob/main/docs/DECISIONS.md) |
 
 Reproduce the numbers without a camera or an API key:
 
@@ -152,10 +148,6 @@ Known and not verified:
 git submodule update --remote doppel tkt
 git commit -am "Update Doppel and TKT"
 ```
-
-When pull request #6 is merged, point `doppel` back at the original repository:
-`git submodule set-url doppel https://github.com/Barlassen/Doppel.git` and
-`git submodule set-branch --branch main doppel`.
 
 Changes to either project go to its own repository first.
 
